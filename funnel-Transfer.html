@@ -1,0 +1,134 @@
+<!--
+    THIS EXAMPLE WAS DOWNLOADED FROM https://echarts.apache.org/examples/zh/editor.html?c=funnel-mutiple
+-->
+<!DOCTYPE html>
+<html style="height: 100%">
+    <head>
+        <meta charset="utf-8">
+    </head>
+    <body style="height: 100%; margin: 0">
+        <div id="container" style="height: 100%"></div>
+
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+        <!-- Uncomment this line if you want to dataTool extension
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/extension/dataTool.min.js"></script>
+        -->
+        <!-- Uncomment this line if you want to use gl extension
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-gl@2/dist/echarts-gl.min.js"></script>
+        -->
+        <!-- Uncomment this line if you want to echarts-stat extension
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-stat@latest/dist/ecStat.min.js"></script>
+        -->
+        <!-- Uncomment this line if you want to use map
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/map/js/china.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/map/js/world.js"></script>
+        -->
+        <!-- Uncomment these two lines if you want to use bmap extension
+        <script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=<Your Key Here>"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/extension/bmap.min.js"></script>
+        -->
+
+        <script type="text/javascript">
+var maleProData=[];//数组初始化
+var femaleProData = [];
+var femaleData=[];
+var maleData=[];
+var malSeriesData = [];
+var femalSeriesData = [];
+//获取csv对象
+d3.csv("maleMean.csv",function(error1,maleCSV){
+    d3.csv("femaleMean.csv", function(error2,femaleCSV) {
+
+    if(error1){
+        console.log(error1);
+    }else{
+    for( var i=0; i<maleCSV.length; i++ ){
+        maleProData.push(maleCSV[i].province_eng);           //对象转数组
+        maleData.push(parseFloat(maleCSV[i].net_trans));
+        malSeriesData.push({
+            value : maleCSV[i].net_trans,
+            name : maleCSV[i].province_eng
+        })
+
+    }
+
+    for( var i=0; i<femaleCSV.length; i++ ){
+        maleProData.push(femaleCSV[i].province_eng);           //对象转数组
+        maleData.push(parseFloat(femaleCSV[i].net_trans));
+        femalSeriesData.push({
+            value : femaleCSV[i].net_trans,
+            name : femaleCSV[i].province_eng
+        })
+
+    }
+
+var dom = document.getElementById("container");
+var myChart = echarts.init(dom);
+var app = {};
+
+
+
+var option;
+
+option = {
+    title: {
+        text: 'Net Transfer per Province in Gender',//大标题
+        subtext: 'year 2015',
+        left: 'right',
+        top: 'top'
+    },
+    tooltip: {
+        trigger: 'item',
+        formatter: '{a} <br/>{b} : {c}CNY'
+    },
+    toolbox: {
+        orient: 'vertical',
+        top: 'center',
+        feature: {
+            dataView: {readOnly: false},
+            restore: {},
+            saveAsImage: {}
+        }
+    },
+    legend: {
+        orient: 'vertical',
+        left: 'left',
+        type: 'scroll',
+        data: maleProData//ctr+shift+l批量改名
+    },
+    series: [
+        {//左下
+
+            name: 'Female',//浮空显示的标题
+            type: 'funnel',//指定类型
+            width: '80%',//大小
+            height: '45%',
+            left: '5%',//位置
+            top: '50%',
+            sort: 'ascending',
+            data: femalSeriesData
+        },
+        {//左上
+            name: 'Male',
+            type: 'funnel',
+            width: '80%',
+            height: '45%',
+            left: '5%',
+            top: '5%',
+
+            data: malSeriesData
+        },
+
+    ]
+    };
+
+if (option && typeof option === 'object') {
+    myChart.setOption(option);
+}
+    }
+})
+})
+        </script>
+    </body>
+</html>
